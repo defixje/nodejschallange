@@ -41,7 +41,7 @@ module.exports = {
 
     return conn;
   },
-  getrowsfromsource: function (rows, callback) {
+  getRowsFromSource: function (rows, callback) {
 
     if (typeof rows === 'undefined') rows = 1;
 
@@ -50,6 +50,14 @@ module.exports = {
         callback(err, null)
       }
       callback(null, rows)
+    });
+  },
+  rowcountsource: function (callback) {
+    return this.sourcedb().query('SELECT COUNT(*) as rows FROM dummy', function (err, data) {
+      if (err) {
+        callback(err, null)
+      }
+      callback(null, JSON.stringify(data))
     });
   }
 };

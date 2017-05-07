@@ -1,34 +1,37 @@
 const sha1 = require('sha1');
-const bluebird = require('bluebird');
+const Promise = require('bluebird');
 const redis = require('../classes/redis');
 const mysql = require('../classes/mysql');
 
 module.exports = {
   goindex: function () {
-    this.start();
+    this.start()
+      .then(() => this.goindex());
   },
   start: function () {
+    return new Promise(function (resolve, reject) {
+      mysql.getRowsFromSource(5000, function (err, data) {
+        return Promise.resolve(data).each(item => {
 
+          var jsonData = JSON.stringify(item);
+          var hashed = sha1(jsonData);
 
-    mysql.getrowsfromsource(500, function (err, data) {
-      return bluebird.resolve(data).each(item => {
+          return redis.checkhash(hashed)
+            .then(reply => {
 
-        var jsondata = JSON.stringify(data);
-        var hashed = sha1(jsondata);
+              if (reply === false) {
+                redis.addhash(hashed, jsonData);
+                console.log('New insert: ' + hashed);
+              } else {
+                console.log('Already: ' + hashed);
+              }
 
-        return redis.checkhash(hashed, jsondata)
-          .then(reply => {
-
-            if (reply === null) {
-              redis.addhash(hashed, jsondata);
-              console.log('New insert: ' + hashed);
-            } else {
-              console.log('Already: ' + hashed);
-            }
-
-          });
-      }).then(() => resolve(true));
+            })
+            .catch(
+              error => console.log('Error: ' + error)
+            );
+        }).then(() => resolve(true));
+      });
     });
-
   }
 };

@@ -1,4 +1,5 @@
 const redis = require('redis');
+const Promise = require('bluebird');
 const client = redis.createClient();
 
 module.exports = {
@@ -6,11 +7,25 @@ module.exports = {
     client.set(key, document);
     client.expire(key, 180);
   },
-  checkhash: function (hash, json, callback) {
-    client.get(hash, function(err, reply) {
-      callback(null, reply);
-    });
+  checkhash: function (hash) {
 
-    client.expire(hash, 180);
+    return new Promise(function (resolve, reject) {
+
+      client.exists(hash, function (err, reply){
+
+        if (err !== null) {
+          reject(err);
+        }
+
+        if (reply === 1) {
+          resolve(true);
+          client.expire(hash, 180);
+        } else {
+          resolve(false);
+        }
+      });
+
+
+    });
   }
 };
