@@ -5,7 +5,9 @@ const client = redis.createClient();
 module.exports = {
   addhash: function (key, document) {
     client.set(key, document);
-    client.expire(key, 180);
+    client.expire(key, 600);
+
+    return Promise.resolve();
   },
   checkhash: function (hash) {
 
@@ -18,14 +20,12 @@ module.exports = {
         }
 
         if (reply === 1) {
-          resolve(true);
-          client.expire(hash, 180);
-        } else {
-          resolve(false);
+          client.expire(hash, 120);
+          return resolve(true);
         }
+
+        return reject(new Error('not_found'));
       });
-
-
     });
   }
 };

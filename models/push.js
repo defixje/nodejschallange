@@ -1,5 +1,7 @@
+const mysql = require('../classes/mysql');
+
 module.exports = {
-  addupdate: function (document) {
-    
+  addUpdate: function (connection, document) {
+      return mysql.addUpadteRow(connection, document);
   }
 };

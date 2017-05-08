@@ -1,4 +1,6 @@
 const mysql = require("mysql");
+const Promise = require('bluebird');
+const moment = require('moment-timezone');
 
 module.exports = {
   sourcedb: function () {
@@ -40,6 +42,18 @@ module.exports = {
     });
 
     return conn;
+  },
+  addUpadteRow: function (connection, data) {
+    const query = Promise.promisify(connection.query, { context: connection });
+
+    return query('REPLACE INTO dummy (id, document, removed, lastupdate) VALUES (?, ?, ?, ?)',
+      [
+        data.id,
+        data.document,
+        data.removed,
+        moment().utc().unix()
+      ]
+    )
   },
   getRowsFromSource: function (rows, callback) {
 
