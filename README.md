@@ -13,4 +13,4 @@ Challanging Ka-Sing.
 **Still to do**
 - Front-end statistics
 - WebSocket implementation
-- Loggin
+- Logging
