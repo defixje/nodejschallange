@@ -7,6 +7,8 @@ module.exports = {
     client.set(key, document);
     client.expire(key, 600);
 
+    console.log('added to redis', key);
+
     return Promise.resolve();
   },
   checkhash: function (hash) {

@@ -46,6 +46,8 @@ module.exports = {
   addUpadteRow: function (connection, data) {
     const query = Promise.promisify(connection.query, { context: connection });
 
+    console.log('updated destination MySQL');
+
     return query('REPLACE INTO dummy (id, document, removed, lastupdate) VALUES (?, ?, ?, ?)',
       [
         data.id,
@@ -55,11 +57,11 @@ module.exports = {
       ]
     )
   },
-  getRowsFromSource: function (rows, callback) {
+  getRowsFromSource: function (connection, rows, callback) {
 
     if (typeof rows === 'undefined') rows = 1;
 
-    return this.sourcedb().query('SELECT * FROM dummy LIMIT ?', rows, function (err, rows) {
+    return connection.query('SELECT * FROM dummy LIMIT ?', rows, function (err, rows) {
       if (err) {
         callback(err, null)
       }
