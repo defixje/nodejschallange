@@ -28,7 +28,7 @@ module.exports = {
                 //console.log('Already up-2-date', hashed);
               })
               .catch(err => {
-                if (err.message === 'not_found') {
+                if (err.message === 'change_found') {
                   console.log(err.message, hashed);
                   return redis.addhash(hashed, jsonData).then(() => {
                     return push.addUpdate(destinationdb, item);

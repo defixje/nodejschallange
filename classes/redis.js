@@ -26,7 +26,7 @@ module.exports = {
           return resolve(true);
         }
 
-        return reject(new Error('not_found'));
+        return reject(new Error('change_found'));
       });
     });
   }
